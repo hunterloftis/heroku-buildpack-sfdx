@@ -1,0 +1,4 @@
+cat << EOF
+default_process_types:
+  web: node server.js
+EOF
