@@ -22,13 +22,13 @@ main() {
 
 validate_env() {
   if [ "$SFDX_AUTH_URL" = "" ]; then
-    echo 'Error: Missing auth url'
-    echo 'Set it with $ heroku config:set SFDX_AUTH_URL="url"'
+    echo 'ERROR: Missing auth url'
+    echo '       Set it with $ heroku config:set SFDX_AUTH_URL="url"'
     exit 1
   fi
   if [ "$SFDX_USER_NAME" = "" ]; then
-    echo 'Error: Missing user name'
-    echo 'Set it with $ heroku config:set SFDX_USER_NAME="your@dxpilot.email"'
+    echo 'ERROR: Missing user name'
+    echo '       Set it with $ heroku config:set SFDX_USER_NAME="your@dxpilot.email"'
     exit 1
   fi
   # if [ "$SFDX_PERMSET" = "" ]; then
@@ -36,8 +36,8 @@ validate_env() {
   #   echo 'Set it with $ heroku config:set SFDX_USER_NAME="your@dxpilot.email"'
   # fi
   if [ "$WORKSPACE_JSON" = "" ]; then
-    echo 'Info: WORKSPACE_JSON not set'
-    echo 'Using default (config/workspace-scratch-def.json)'
+    echo 'INFO: WORKSPACE_JSON not set'
+    echo '      Using default (config/workspace-scratch-def.json)'
     export WORKSPACE_JSON='config/workspace-scratch-def.json'
   fi
 }
