@@ -68,7 +68,7 @@ install_nodejs() {
   fi
   mkdir -p "$DIR/.heroku/bin"
   tar xzf /tmp/node.tar.gz -C /tmp
-  mv /tmp/node-v*/* "$DIR/.heroku"
+  mv /tmp/node-v*/* "$DIR/.heroku/"
   chmod +x "$DIR/.heroku/bin/*"
 }
 
