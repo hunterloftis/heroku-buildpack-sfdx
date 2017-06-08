@@ -4,7 +4,7 @@ BUILD_DIR="$1"
 CACHE_DIR="$2"
 ENV_DIR="3"
 
-source /dev/stdin <<< "$(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib/v7/stdlib.sh)"
+source <(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib/v7/stdlib.sh)
 
 export_env
 validate_env
