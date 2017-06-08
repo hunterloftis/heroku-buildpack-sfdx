@@ -25,6 +25,8 @@ $ sfdx update
 
 ## Log in to the Developer Hub
 
+Use your SFDX Pilot email:
+
 ```
 $ sfdx force:auth:web:login -d -a 'Hub Org'
 ```
@@ -47,15 +49,9 @@ $ heroku create --buildpack https://github.com/hunterloftis/heroku-buildpack-sfd
 ## Configure the app for Dreamhouse
 
 ```
-$ sfdx force:org:describe -u your@pilot.email --json --verbose
-```
-
-You'll copy the `sfdxAuthUrl` value into `SFDX_AUTH_URL` below:
-
-```
+$ heroku config:set SFDX_AUTH_URL="$(sfdx force:org:describe -u your@pilot.email --verbose | grep -o 'force://.*')"
 $ heroku config:set SFDX_USER_NAME='your@pilot.email'
 $ heroku config:set SFDX_PERMSET='Dreamhouse'
-$ heroku config:set SFDX_AUTH_URL='Force://...'
 ```
 
 ## Deploy
