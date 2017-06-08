@@ -17,7 +17,7 @@ main() {
   install_sfdx_cli "$BUILD_DIR"
   authorize_dev_hub "$BUILD_DIR" "$SFDX_AUTH_URL"
   create_scratch_org "$SFDX_USER_NAME" "$BUILD_DIR/$WORKSPACE_JSON"
-  push_source
+  push_source "$BUILD_DIR"
 }
 
 validate_env() {
@@ -74,9 +74,12 @@ create_scratch_org() {
 }
 
 push_source() {
+  local DIR="$1"
+  cd "$DIR"
   sfdx force:source:push
   # sfdx force:user:permset:assign -n "$PERMSET"
   sfdx force:org:open -r
+  cd -
 }
 
 main "$@"
