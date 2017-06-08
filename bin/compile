@@ -76,6 +76,7 @@ install_nodejs() {
   tar xzf /tmp/node.tar.gz -C /tmp
   mv /tmp/node-v*/* "$DIR/.heroku/"
   chmod +x $DIR/.heroku/bin/*
+  echo "node $(node --version)"
 }
 
 install_sfdx_cli() {
