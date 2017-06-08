@@ -66,6 +66,7 @@ install_nodejs() {
   if [ "$CODE" != "200" ]; then
     echo "Unable to download node: $CODE" && false
   fi
+  mkdir -p "$DIR/.heroku/bin"
   tar xzf /tmp/node.tar.gz -C /tmp
   mv /tmp/node-v*/* "$DIR/.heroku"
   chmod +x "$DIR/.heroku/bin/*"
