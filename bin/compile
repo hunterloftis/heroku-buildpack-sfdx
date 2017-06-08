@@ -12,12 +12,21 @@ ENV_DIR="$3"
 source <(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib/v7/stdlib.sh)
 
 main() {
+  puts_step 'Exporting environment'
   export_env "$ENV_DIR"
   validate_env
+
+  puts_step 'Installing the sfdx CLI'
   install_sfdx_cli "$BUILD_DIR"
+
+  puts_step 'Authorizing dev hub'
   authorize_dev_hub "$BUILD_DIR" "$SFDX_AUTH_URL"
+
+  puts_step 'Creating scratch org'
   create_scratch_org "$SFDX_USER_NAME" "$BUILD_DIR/$WORKSPACE_JSON"
-  push_source "$BUILD_DIR"
+
+  puts_step 'Pushing app source'
+  push_source "$BUILD_DIR" "$SFDX_PERMSET"
 }
 
 validate_env() {
@@ -31,10 +40,10 @@ validate_env() {
     echo '       Set it with $ heroku config:set SFDX_USER_NAME="your@dxpilot.email"'
     exit 1
   fi
-  # if [ "$SFDX_PERMSET" = "" ]; then
-  #   echo 'Error: Missing permission set name'
-  #   echo 'Set it with $ heroku config:set SFDX_USER_NAME="your@dxpilot.email"'
-  # fi
+  if [ "$SFDX_PERMSET" = "" ]; then
+    echo 'Error: Missing permission set'
+    echo 'Set it with $ heroku config:set SFDX_PERMSET="Permset"'
+  fi
   if [ "$WORKSPACE_JSON" = "" ]; then
     echo 'INFO: WORKSPACE_JSON not set'
     echo '      Using default (config/workspace-scratch-def.json)'
@@ -75,11 +84,13 @@ create_scratch_org() {
 
 push_source() {
   local DIR="$1"
+  local PERMSET="$2"
+  local PREV="$(pwd)"
   cd "$DIR"
   sfdx force:source:push
-  # sfdx force:user:permset:assign -n "$PERMSET"
+  sfdx force:user:permset:assign -n "$PERMSET"  # maybe this is what was missing from sfdx-simple?
   sfdx force:org:open -r
-  cd -
+  cd "$PREV"
 }
 
-main "$@"
+main
