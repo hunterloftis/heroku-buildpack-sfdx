@@ -1,0 +1,10 @@
+#!/bin/sh
+
+BUILD_DIR="$1"
+
+if [ -f "$BUILD_DIR/sfdx-workspace.json" ]; then
+  echo "SFDX"
+  exit 0
+else
+  exit 1
+fi

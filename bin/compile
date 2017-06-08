@@ -1,0 +1,69 @@
+#!/bin/sh
+
+BUILD_DIR="$1"
+CACHE_DIR="$2"
+ENV_DIR="3"
+
+source /dev/stdin <<< "$(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib/v7/stdlib.sh)"
+
+export_env
+validate_env
+install_sfdx_cli "$BUILD_DIR"
+authorize_dev_hub "$BUILD_DIR" "$SFDX_AUTH_URL"
+create_scratch_org "$SFDX_USER_NAME" "$WORKSPACE_JSON"
+push_source
+
+validate_env() {
+  if [ "$SFDX_AUTH_URL" = "" ]; then
+    echo 'Error: Missing auth url'
+    echo 'Set it with $ heroku config:set SFDX_AUTH_URL="url"'
+  fi
+  if [ "$SFDX_USER_NAME" = "" ]; then
+    echo 'Error: Missing user name'
+    echo 'Set it with $ heroku config:set SFDX_USER_NAME="your@dxpilot.email"'
+  fi
+  # if [ "$SFDX_PERMSET" = "" ]; then
+  #   echo 'Error: Missing permission set name'
+  #   echo 'Set it with $ heroku config:set SFDX_USER_NAME="your@dxpilot.email"'
+  # fi
+  if [ "$WORKSPACE_JSON" = "" ]; then
+    echo 'Info: WORKSPACE_JSON not set'
+    echo 'Using default (config/workspace-scratch-def.json)'
+    export WORKSPACE_JSON='config/workspace-scratch-def.json'
+  fi
+}
+
+install_sfdx_cli() {
+  local URL='https://developer.salesforce.com/media/salesforce-cli/beta/sfdx-v5.7.4-57b4969-linux-amd64.tar.xz'
+  local DIR="$1"
+  curl -SL "$URL" | tar xJ
+  mkdir -p "$DIR/.heroku/bin"
+  cp sfdx/bin/sfdx "$DIR/.heroku/bin/sfdx"
+  rm -rf "$DIR/.local/share/sfdx/cli"
+  mkdir -p "$DIR/.local/share/sfdx"
+  cp -r sfdx "$DIR/.local/share/sfdx/cli"
+  export PATH=".heroku/bin:$PATH"
+  sfdx update
+  sfdx plugins:install sfdx-oss-plugin
+  sfdx plugins
+}
+
+authorize_dev_hub() {
+  local DIR="$1"
+  local AUTH_URL="$2"
+  echo "$AUTH_URL" > "$DIR/.heroku/sfdxAuthUrl"
+  sfdx force:auth:sfdxurl:store -f "$DIR/.heroku/sfdxAuthUrl" -s -d
+}
+
+create_scratch_org() {
+  local USER_NAME="$1"
+  local WORKSPACE_JSON="$2"
+  sfdx force:config:set defaultdevhubusername="$USER_NAME" --global
+  sfdx force:org:create -s -f "$WORKSPACE_JSON" -a "default scratch org"
+}
+
+push_source() {
+  sfdx force:source:push
+  # sfdx force:user:permset:assign -n "$PERMSET"
+  sfdx force:org:open -r
+}
