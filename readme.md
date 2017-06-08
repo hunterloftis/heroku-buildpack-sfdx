@@ -2,7 +2,7 @@
 
 Deploy SFDX apps to Salesforce scratch orgs via Heroku.
 
-These instructions here walk through local sfdx CLI setup and
+These instructions walk through local sfdx CLI setup and
 Heroku-based deployment of the Salesforce Dreamhouse demo app.
 
 ## Join the Salesforce SFDX Pilot
