@@ -16,7 +16,7 @@ main() {
   validate_env
   install_sfdx_cli "$BUILD_DIR"
   authorize_dev_hub "$BUILD_DIR" "$SFDX_AUTH_URL"
-  create_scratch_org "$SFDX_USER_NAME" "$WORKSPACE_JSON"
+  create_scratch_org "$SFDX_USER_NAME" "$BUILD_DIR/$WORKSPACE_JSON"
   push_source
 }
 
@@ -68,9 +68,9 @@ authorize_dev_hub() {
 
 create_scratch_org() {
   local USER_NAME="$1"
-  local WORKSPACE_JSON="$2"
+  local FILE="$2"
   sfdx force:config:set defaultdevhubusername="$USER_NAME" --global
-  sfdx force:org:create -s -f "$WORKSPACE_JSON" -a "default scratch org"
+  sfdx force:org:create -s -f "$FILE" -a "default scratch org"
 }
 
 push_source() {
