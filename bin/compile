@@ -17,6 +17,7 @@ main() {
   validate_env
 
   header 'Installing dependencies'
+  setup_bin "$BUILD_DIR"
   install_nodejs "$BUILD_DIR"
 
   header 'Installing the sfdx CLI'
@@ -59,6 +60,12 @@ validate_env() {
   fi
 }
 
+setup_bin() {
+  local DIR="$1"
+  mkdir -p "$DIR/.heroku/bin"
+  export PATH="$DIR/.heroku/bin:$PATH"
+}
+
 install_nodejs() {
   local DIR="$1"
   read NUMBER URL < <(curl --silent --get --retry 5 --retry-max-time 15 --data-urlencode 'range=8.x' 'https://nodebin.herokai.com/v1/node/linux-x64/latest.txt')
@@ -66,24 +73,21 @@ install_nodejs() {
   if [ "$CODE" != "200" ]; then
     echo "Unable to download node: $CODE" && false
   fi
-  mkdir -p "$DIR/.heroku/bin"
   tar xzf /tmp/node.tar.gz -C /tmp
   mv /tmp/node-v*/* "$DIR/.heroku/"
-  chmod +x "$DIR/.heroku/bin/*"
+  chmod +x $DIR/.heroku/bin/*
 }
 
 install_sfdx_cli() {
   local URL='https://developer.salesforce.com/media/salesforce-cli/beta/sfdx-v5.7.4-57b4969-linux-amd64.tar.xz'
   local DIR="$1"
   curl --silent --location "$URL" | tar xJ
-  mkdir -p "$DIR/.heroku/bin"
   echo "sfdx/bin/sfdx:"
   ls sfdx/bin/sfdx
   cp sfdx/bin/sfdx "$DIR/.heroku/bin/sfdx"
   rm -rf "$DIR/.local/share/sfdx/cli"
   mkdir -p "$DIR/.local/share/sfdx"
   cp -r sfdx "$DIR/.local/share/sfdx/cli"
-  export PATH="$DIR/.heroku/bin:$PATH"
   sfdx update
   sfdx plugins:install sfdx-oss-plugin
   sfdx plugins
