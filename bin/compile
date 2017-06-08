@@ -64,6 +64,8 @@ setup_bin() {
   local DIR="$1"
   mkdir -p "$DIR/.heroku/bin"
   export PATH="$DIR/.heroku/bin:$PATH"
+  mkdir -p "$DIR/.profile.d"
+  echo 'PATH=$PATH:$HOME/.heroku/bin' > .profile.d/sfdx.sh
 }
 
 install_nodejs() {
