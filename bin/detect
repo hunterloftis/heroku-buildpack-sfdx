@@ -1,5 +1,3 @@
-#!/bin/sh
-
 BUILD_DIR="$1"
 
 if [ -f "$BUILD_DIR/sfdx-workspace.json" ]; then
