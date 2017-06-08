@@ -1,15 +1,24 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
+
+set -o errexit    # always exit on error
+set -o pipefail   # don't ignore exit codes when piping output
+unset GIT_DIR     # Avoid GIT_DIR leak from previous build steps
+
 BUILD_DIR="$1"
 CACHE_DIR="$2"
 ENV_DIR="$3"
 
 source <(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib/v7/stdlib.sh)
 
-export_env
-validate_env
-install_sfdx_cli "$BUILD_DIR"
-authorize_dev_hub "$BUILD_DIR" "$SFDX_AUTH_URL"
-create_scratch_org "$SFDX_USER_NAME" "$WORKSPACE_JSON"
-push_source
+main() {
+  export_env "$ENV_DIR"
+  validate_env
+  install_sfdx_cli "$BUILD_DIR"
+  authorize_dev_hub "$BUILD_DIR" "$SFDX_AUTH_URL"
+  create_scratch_org "$SFDX_USER_NAME" "$WORKSPACE_JSON"
+  push_source
+}
 
 validate_env() {
   if [ "$SFDX_AUTH_URL" = "" ]; then
@@ -65,3 +74,5 @@ push_source() {
   # sfdx force:user:permset:assign -n "$PERMSET"
   sfdx force:org:open -r
 }
+
+main "$@"
