@@ -8,6 +8,7 @@ unset GIT_DIR     # Avoid GIT_DIR leak from previous build steps
 BUILD_DIR="$1"
 CACHE_DIR="$2"
 ENV_DIR="$3"
+BP_DIR=$(cd $(dirname ${0:-}); cd ..; pwd)
 
 source <(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib/v7/stdlib.sh)
 
@@ -17,7 +18,7 @@ main() {
   validate_env
 
   header 'Installing dependencies'
-  setup_bin "$BUILD_DIR"
+  setup_dirs "$BP_DIR" "$BUILD_DIR"
   install_nodejs "$BUILD_DIR"
 
   header 'Installing the sfdx CLI'
@@ -60,12 +61,12 @@ validate_env() {
   fi
 }
 
-setup_bin() {
-  local DIR="$1"
-  mkdir -p "$DIR/.heroku/bin"
-  export PATH="$DIR/.heroku/bin:$PATH"
-  mkdir -p "$DIR/.profile.d"
-  echo 'PATH=$PATH:$HOME/.heroku/bin' > "$DIR/.profile.d/sfdx.sh"
+setup_dirs() {
+  local BP="$1"
+  local APP="$2"
+  cp -r $BP/app/* "$APP/"
+  mkdir -p "$APP/.heroku/bin"
+  export PATH="$APP/.heroku/bin:$PATH"
 }
 
 install_nodejs() {
