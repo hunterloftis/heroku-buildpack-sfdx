@@ -118,7 +118,7 @@ push_source() {
   cd "$DIR"
   sfdx force:source:push
   sfdx force:user:permset:assign -n "$PERMSET"  # maybe this is what was missing from sfdx-simple?
-  sfdx force:org:open -r
+  sfdx force:org:open -r | grep -o 'https://.*' > force-org-open.txt
   cd "$PREV"
 }
 
