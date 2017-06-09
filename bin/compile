@@ -70,7 +70,7 @@ setup_dirs() {
   local BP="$1"
   local APP="$2"
   echo "copying $BP/app into $APP"
-  rsync -rLptDv "$BP"/app "$APP"
+  rsync -rLptDv $BP/app/ "$APP"
   export PATH="$APP/.heroku/bin:$PATH"
 }
 
