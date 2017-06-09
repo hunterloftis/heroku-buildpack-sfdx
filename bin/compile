@@ -19,7 +19,7 @@ main() {
   install_nodejs "$BUILD_DIR"
   validate_env
 
-  header 'Installing the sfdx CLI'
+  header 'Installing sfdx'
   install_sfdx_cli "$BUILD_DIR"
 
   header 'Authorizing dev hub'
