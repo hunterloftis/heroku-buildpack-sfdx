@@ -32,6 +32,8 @@ main() {
 
   header 'Pushing app source'
   push_source "$BUILD_DIR" "$SFDX_PERMSET"
+
+  header "Successfully deployed!"
 }
 
 header() {
