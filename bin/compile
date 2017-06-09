@@ -69,7 +69,8 @@ validate_env() {
 setup_dirs() {
   local BP="$1"
   local APP="$2"
-  rsync -rLptD "$BP"/app "$APP"
+  echo "copying $BP/app into $APP"
+  rsync -rLptDv "$BP"/app "$APP"
   export PATH="$APP/.heroku/bin:$PATH"
 }
 
