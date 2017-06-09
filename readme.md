@@ -49,9 +49,7 @@ $ heroku create --buildpack https://github.com/hunterloftis/heroku-buildpack-sfd
 ## Configure the app for Dreamhouse
 
 ```
-$ heroku config:set SFDX_AUTH_URL="$(sfdx force:org:describe -u your@pilot.email --verbose | grep -o 'force://.*')"
-$ heroku config:set SFDX_USER_NAME='your@pilot.email'
-$ heroku config:set SFDX_PERMSET='Dreamhouse'
+$ heroku config:set SFDX_DESCRIPTION="$(sfdx force:org:describe -u your@pilot.email --verbose --json)"
 ```
 
 ## Deploy

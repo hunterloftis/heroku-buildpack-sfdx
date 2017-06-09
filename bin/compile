@@ -25,13 +25,19 @@ main() {
   install_sfdx_cli "$BUILD_DIR"
 
   header 'Authorizing dev hub'
-  authorize_dev_hub "$BUILD_DIR" "$SFDX_AUTH_URL"
+  authorize_dev_hub "$BUILD_DIR" "$SFDX_AUTH_URL" "$SFDX_USER_NAME"
 
   header 'Creating scratch org'
-  create_scratch_org "$SFDX_USER_NAME" "$BUILD_DIR/$WORKSPACE_JSON"
+  create_scratch_org "$BUILD_DIR" "$BUILD_DIR/$WORKSPACE_JSON"
 
   header 'Pushing app source'
   push_source "$BUILD_DIR" "$SFDX_PERMSET"
+
+  header 'Assigning permission sets'
+  assign_permissions "$BUILD_DIR"
+
+  header 'Saving org url'
+  save_url "$BUILD_DIR" "$BUILD_DIR/force-org-open.txt"
 
   header "Successfully deployed!"
 }
@@ -42,19 +48,16 @@ header() {
 }
 
 validate_env() {
-  if [ "$SFDX_AUTH_URL" = "" ]; then
-    echo 'ERROR: Missing auth url'
-    echo '       Set it with $ heroku config:set SFDX_AUTH_URL="url"'
+  if [ "$SFDX_DESCRIPTION" = "" ]; then
+    echo 'ERROR: Missing description'
+    echo '       Set it with $ heroku config:set SFDX_DESCRIPTION="$(sfdx force:org:describe -u your@pilot.email --verbose --json)"'
     exit 1
   fi
+  export SFDX_USER_NAME=`echo $SFDX_DESCRIPTION | jq -r .username`
   if [ "$SFDX_USER_NAME" = "" ]; then
-    echo 'ERROR: Missing user name'
-    echo '       Set it with $ heroku config:set SFDX_USER_NAME="your@dxpilot.email"'
+    echo 'ERROR: Missing user name in description'
+    echo '       Set it with $ heroku config:set SFDX_DESCRIPTION="$(sfdx force:org:describe -u your@pilot.email --verbose --json)"'
     exit 1
-  fi
-  if [ "$SFDX_PERMSET" = "" ]; then
-    echo 'Error: Missing permission set'
-    echo 'Set it with $ heroku config:set SFDX_PERMSET="Permset"'
   fi
   if [ "$WORKSPACE_JSON" = "" ]; then
     echo 'INFO: WORKSPACE_JSON not set'
@@ -102,26 +105,41 @@ install_sfdx_cli() {
 authorize_dev_hub() {
   local DIR="$1"
   local AUTH_URL="$2"
-  echo "$AUTH_URL" > "$DIR/.heroku/sfdxAuthUrl"
-  sfdx force:auth:sfdxurl:store -f "$DIR/.heroku/sfdxAuthUrl" -s -d
+  local USER_NAME="$3"
+  local FILE='/tmp/sfdx-description'
+  echo "$SFDX_DESCRIPTION" > "$FILE"
+  (cd "$DIR"
+  sfdx force:auth:sfdxurl:store -f "$FILE" -s -d
+  sfdx force:config:set defaultdevhubusername="$USER_NAME" --global
+  )
 }
 
 create_scratch_org() {
-  local USER_NAME="$1"
+  local DIR="$1"
   local FILE="$2"
-  sfdx force:config:set defaultdevhubusername="$USER_NAME" --global
-  sfdx force:org:create -s -f "$FILE" -a "default scratch org"
+  (cd "$DIR" && sfdx force:org:create -s -f "$FILE" -a "default scratch org")
 }
 
 push_source() {
   local DIR="$1"
-  local PERMSET="$2"
-  local PREV="$(pwd)"
-  cd "$DIR"
-  sfdx force:source:push
-  sfdx force:user:permset:assign -n "$PERMSET"  # maybe this is what was missing from sfdx-simple?
-  sfdx force:org:open -r | grep -o 'https://.*' > force-org-open.txt
-  cd "$PREV"
+  (cd "$DIR" && sfdx force:source:push)
+}
+
+assign_permissions() {
+  local DIR="$1"
+  (cd "$DIR"
+  for file in "$DIR"/force-app/main/default/permissionsets/*; do
+    local PERMSET=${file%%.*}
+    echo " - adding permset $PERMSET..."
+    sfdx force:user:permset:assign -n "$PERMSET"
+  done
+  )
+}
+
+save_url() {
+  local DIR="$1"
+  local FILE="$2"
+  (cd "$DIR" && sfdx force:org:open -r | grep -o 'https://.*' > "$FILE")
 }
 
 main
