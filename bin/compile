@@ -13,9 +13,8 @@ BP_DIR=$(cd $(dirname ${0:-}); cd ..; pwd)
 source <(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib/v7/stdlib.sh)
 
 main() {
+  header 'Building environment'
   export_env "$ENV_DIR"
-  
-  header 'Installing dependencies'
   setup_dirs "$BP_DIR" "$BUILD_DIR"
   install_nodejs "$BUILD_DIR"
   validate_env
