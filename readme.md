@@ -49,7 +49,7 @@ $ heroku create --buildpack https://github.com/hunterloftis/heroku-buildpack-sfd
 ## Configure the app
 
 ```
-$ heroku config:set SFDX_DESCRIPTION="$(sfdx force:org:describe -u your@pilot.email --verbose --json)"
+$ heroku config:set SFDX_DESCRIPTION="$(sfdx force:org:describe --verbose --json -u your@pilot.email)"
 ```
 
 This stores metadata (like your pilot username and Dev Hub auth url) as config on the Heroku app.
