@@ -94,8 +94,8 @@ install_sfdx_cli() {
   mkdir -p "$DIR/.local/share/sfdx"
   cp -r sfdx "$DIR/.local/share/sfdx/cli"
   sfdx update
-  sfdx plugins:install sfdx-oss-plugin
-  sfdx plugins
+  # sfdx plugins:install sfdx-oss-plugin
+  # sfdx plugins
 }
 
 authorize_dev_hub() {
