@@ -112,7 +112,7 @@ authorize_dev_hub() {
 create_scratch_org() {
   local DIR="$1"
   local FILE="$2"
-  (cd "$DIR" && sfdx force:org:create -s -f "$FILE" -a "default scratch org")
+  (cd "$DIR" && sfdx force:org:create -s -f "$FILE" -a 'heroku-sfdx-scratch-org')
 }
 
 push_source() {
@@ -135,6 +135,7 @@ save_url() {
   local DIR="$1"
   local FILE="$2"
   (cd "$DIR" && sfdx force:org:open -r | grep -o 'https://.*' > "$FILE")
+  echo "$FILE"
 }
 
 main
