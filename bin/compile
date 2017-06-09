@@ -13,7 +13,6 @@ BP_DIR=$(cd $(dirname ${0:-}); cd ..; pwd)
 source <(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib/v7/stdlib.sh)
 
 main() {
-  header 'Exporting environment'
   export_env "$ENV_DIR"
   
   header 'Installing dependencies'
