@@ -15,11 +15,11 @@ source <(curl -s --retry 3 https://lang-common.s3.amazonaws.com/buildpack-stdlib
 main() {
   header 'Exporting environment'
   export_env "$ENV_DIR"
-  validate_env
-
+  
   header 'Installing dependencies'
   setup_dirs "$BP_DIR" "$BUILD_DIR"
   install_nodejs "$BUILD_DIR"
+  validate_env
 
   header 'Installing the sfdx CLI'
   install_sfdx_cli "$BUILD_DIR"
