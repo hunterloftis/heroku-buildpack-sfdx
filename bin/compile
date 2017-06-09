@@ -70,7 +70,7 @@ setup_dirs() {
   local BP="$1"
   local APP="$2"
   echo "copying $BP/app into $APP"
-  rsync -rLptDv $BP/app/ "$APP"
+  rsync -rLptD $BP/app/ "$APP"
   export PATH="$APP/.heroku/bin:$PATH"
 }
 
@@ -82,7 +82,7 @@ install_nodejs() {
     echo "Unable to download node: $CODE" && false
   fi
   tar xzf /tmp/node.tar.gz -C /tmp
-  mv /tmp/node-v*/* "$DIR/.heroku/"
+  rsync -rLptD /tmp/node-v*/ "$DIR/.heroku/"
   chmod +x $DIR/.heroku/bin/*
   echo "node $(node --version)"
 }
