@@ -70,7 +70,6 @@ setup_dirs() {
   local BP="$1"
   local APP="$2"
   cp -r $BP/app/* "$APP/"
-  mkdir -p "$APP/.heroku/bin"
   export PATH="$APP/.heroku/bin:$PATH"
 }
 
