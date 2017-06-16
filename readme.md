@@ -63,3 +63,15 @@ $ heroku open
 
 Scratch orgs have DNS entries on salesforce sub-domains,
 so sometimes it takes a few minutes before the url is available.
+
+Your Heroku app will automatically redirect you to and log you into your new SFDX Scratch Org.
+Now you can check out the Dreamhouse app you deployed:
+
+![setup](https://user-images.githubusercontent.com/364501/27246563-496b3a56-52a7-11e7-85aa-94b92920e993.png)
+*click setup*
+
+![dreamhouse](https://user-images.githubusercontent.com/364501/27246561-4967df32-52a7-11e7-87d1-a2a9875b594b.png)
+*click the dreamhouse app*
+
+![app](https://user-images.githubusercontent.com/364501/27246562-496accb0-52a7-11e7-8340-19c234cf21c3.png)
+*beautiful!*
