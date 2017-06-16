@@ -125,7 +125,7 @@ assign_permissions() {
   (cd "$DIR"
   for file in "$DIR"/force-app/main/default/permissionsets/*; do
     local PERMSET=$(basename "$file" | cut -d. -f1)
-    echo " - adding permset $PERMSET..."
+    echo " - $PERMSET"
     sfdx force:user:permset:assign -n "$PERMSET"
   done
   )
