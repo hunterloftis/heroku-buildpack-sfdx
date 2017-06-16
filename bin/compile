@@ -27,15 +27,13 @@ main() {
 
   header 'Creating scratch org'
   create_scratch_org "$BUILD_DIR" "$BUILD_DIR/$WORKSPACE_JSON"
+  save_url "$BUILD_DIR" "$BUILD_DIR/force-org-open.txt"
 
   header 'Pushing app source'
   push_source "$BUILD_DIR" "$SFDX_PERMSET"
 
   header 'Assigning permission sets'
   assign_permissions "$BUILD_DIR"
-
-  header 'Saving org url'
-  save_url "$BUILD_DIR" "$BUILD_DIR/force-org-open.txt"
 
   header "Successfully deployed!"
 }
